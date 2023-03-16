@@ -1,4 +1,9 @@
 from datetime import *
-#from dateutil import *
+from datetime import timedelta
 
-print("Hello!")
+now = datetime.now()
+game = datetime(2023, 3, 22, 14, 30)
+
+print(now)
+print(game)
+print(now+timedelta(days=28))
