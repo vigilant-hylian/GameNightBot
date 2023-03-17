@@ -43,9 +43,9 @@ class Schedule(commands.Cog, name="schedule"):
             next_session = datetime.fromtimestamp(game[2])
             while time.mktime(next_session.timetuple()) < time.mktime(current_time.timetuple()):
                 next_session += timedelta(days=game[3])
-            embed.add_field(name=f"ID: {game[0]}", value=f"Game: {game[1]}\n"
-                f"Next Session: <t:{math.trunc(datetime.timestamp(next_session))}>\n"
-                f"Runs every: {game[3]} days", inline=False)
+            embed.add_field(name=f"{game[1]}", value=f"Next Session: <t:{math.trunc(datetime.timestamp(next_session))}>\n"
+                f"Runs every: {game[3]} days\n"
+                f"ID: {game[0]}\n", inline=False)
         await context.send(embed=embed)
 
     @commands.hybrid_command(
