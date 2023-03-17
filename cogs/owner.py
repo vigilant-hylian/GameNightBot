@@ -18,13 +18,13 @@ class Owner(commands.Cog, name="owner"):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(
-        name="sync",
+    @commands.hybrid_command(
+        name="command_sync",
         description="Synchonizes the slash commands.",
     )
     @app_commands.describe(scope="The scope of the sync. Can be `global` or `guild`")
     @checks.is_owner()
-    async def sync(self, context: Context, scope: str) -> None:
+    async def command_sync(self, context: Context, scope: str) -> None:
         """
         Synchonizes the slash commands.
 
@@ -55,13 +55,13 @@ class Owner(commands.Cog, name="owner"):
         )
         await context.send(embed=embed)
 
-    @commands.command(
-        name="unsync",
+    @commands.hybrid_command(
+        name="command_unsync",
         description="Unsynchonizes the slash commands.",
     )
     @app_commands.describe(scope="The scope of the sync. Can be `global`, `current_guild` or `guild`")
     @checks.is_owner()
-    async def unsync(self, context: Context, scope: str) -> None:
+    async def command_unsync(self, context: Context, scope: str) -> None:
         """
         Unsynchonizes the slash commands.
 
