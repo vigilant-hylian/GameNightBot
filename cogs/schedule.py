@@ -6,35 +6,81 @@ Description:
 Version: 5.5.0
 """
 
+import discord
 from discord.ext import commands
 from discord.ext.commands import Context
+from datetime import datetime, timedelta
+import pytz
+import time
+import math
 
-from helpers import checks
+from helpers import db_manager, checks
 
 
 class Schedule(commands.Cog, name="schedule"):
     def __init__(self, bot):
         self.bot = bot
 
-    # Here you can just add your own commands, you'll always need to provide "self" as first parameter.
 
     @commands.hybrid_command(
-        name="getschedules",
+        name="whenisgame",
         description="Lists all the currently set-up games.",
     )
-    # This will only allow owners of the bot to execute the command -> config.json
-    @checks.is_owner()
-    async def getschedules(self, context: Context, scope: str):
+    async def whenisgame(self, context: Context):
         """
-        This is a testing command that does nothing.
+        This is a slash command to return a list of all the games currently stored in the database.
 
         :param context: The application command context.
         """
-        # Do your stuff here
+        games_list = await db_manager.get_schedules()
+        embed = discord.Embed(
+            title=f"Currently Running Games",
+            description="The following games have been scheduled to be played! The next session is below in your local timezome.",
+            color=0x299639
+        )
+        for game in games_list:
+            current_time = datetime.now()
+            next_session = datetime.fromtimestamp(game[2])
+            while time.mktime(next_session.timetuple()) < time.mktime(current_time.timetuple()):
+                next_session += timedelta(days=game[3])
+            embed.add_field(name=f"ID: {game[0]}", value=f"Game: {game[1]}\n"
+                f"Next Session: <t:{math.trunc(datetime.timestamp(next_session))}>\n"
+                f"Runs every: {game[3]} days", inline=False)
+        await context.send(embed=embed)
 
-        # Don't forget to remove "pass", I added this just because there's no content in the method.
-        print(scope)
-        pass
+    @commands.hybrid_command(
+        name='add_game',
+        description='Add a new game to the schedule.'
+    )
+    async def add_game(self, context: Context, gamename: str, repeat_in_x_days: int, year: int, month: int, day: int, hour: int, minute: int, tz: str):
+        try:
+            timezone = pytz.timezone(tz)
+            game = datetime(year=year, month=month, day=day, hour=hour, minute=minute)
+            utcgame = timezone.localize(game)
+            utctime = math.trunc(time.mktime(utcgame.timetuple()))
+        except pytz.UnknownTimeZoneError as e:
+            embed = discord.Embed(
+                title=f"Unknown Timezone",
+                description=f"Error: {e}",
+                color=0xff0000
+            )
+            await context.send(embed=embed)
+            return
+        except ValueError as e:
+            embed = discord.Embed(
+                title=f"Bad DateTime Input",
+                description=f"Error: {e}",
+                color=0xff0000
+            )
+            await context.send(embed=embed)
+            return
+        await db_manager.add_schedule(gamename, utctime, repeat_in_x_days)
+        embed = discord.Embed(
+            title=f"Added new game",
+            description=f"{gamename}: Starting at <t:{utctime}>, repeating every {repeat_in_x_days} days.",
+            color=0x299639
+        )
+        await context.send(embed=embed)
 
 
 async def setup(bot):

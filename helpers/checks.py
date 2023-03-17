@@ -10,10 +10,7 @@ import json
 import os
 from typing import Callable, TypeVar
 
-from discord.ext import commands
-
 from exceptions import *
-from helpers import db_manager
 
 T = TypeVar("T")
 
