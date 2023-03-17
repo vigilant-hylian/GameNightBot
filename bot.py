@@ -214,18 +214,6 @@ async def on_command_error(context: Context, error) -> None:
             color=0xE02B2B
         )
         await context.send(embed=embed)
-    elif isinstance(error, exceptions.UserBlacklisted):
-        """
-        The code here will only execute if the error is an instance of 'UserBlacklisted', which can occur when using
-        the @checks.not_blacklisted() check in your command, or you can raise the error by yourself.
-        """
-        embed = discord.Embed(
-            description="You are blacklisted from using the bot!",
-            color=0xE02B2B
-        )
-        await context.send(embed=embed)
-        bot.logger.warning(
-            f"{context.author} (ID: {context.author.id}) tried to execute a command in the guild {context.guild.name} (ID: {context.guild.id}), but the user is blacklisted from using the bot.")
     elif isinstance(error, exceptions.UserNotOwner):
         """
         Same as above, just for the @checks.is_owner() check.

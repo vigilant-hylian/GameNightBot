@@ -26,7 +26,7 @@ class General(commands.Cog, name="general"):
         name="help",
         description="List all commands the bot has loaded."
     )
-    @checks.not_blacklisted()
+
     async def help(self, context: Context) -> None:
         prefix = self.bot.config["prefix"]
         embed = discord.Embed(
@@ -47,7 +47,6 @@ class General(commands.Cog, name="general"):
         name="botinfo",
         description="Get some useful (or not) information about the bot.",
     )
-    @checks.not_blacklisted()
     async def botinfo(self, context: Context) -> None:
         """
         Get some useful (or not) information about the bot.
@@ -85,7 +84,6 @@ class General(commands.Cog, name="general"):
         name="serverinfo",
         description="Get some useful (or not) information about the server.",
     )
-    @checks.not_blacklisted()
     async def serverinfo(self, context: Context) -> None:
         """
         Get some useful (or not) information about the server.
@@ -132,7 +130,6 @@ class General(commands.Cog, name="general"):
         name="ping",
         description="Check if the bot is alive.",
     )
-    @checks.not_blacklisted()
     async def ping(self, context: Context) -> None:
         """
         Check if the bot is alive.
@@ -150,7 +147,6 @@ class General(commands.Cog, name="general"):
         name="invite",
         description="Get the invite link of the bot to be able to invite it.",
     )
-    @checks.not_blacklisted()
     async def invite(self, context: Context) -> None:
         """
         Get the invite link of the bot to be able to invite it.
@@ -167,27 +163,6 @@ class General(commands.Cog, name="general"):
             await context.send("I sent you a private message!")
         except discord.Forbidden:
             await context.send(embed=embed)
-
-    # @commands.hybrid_command(
-    #     name="server",
-    #     description="Get the invite link of the discord server of the bot for some support.",
-    # )
-    # @checks.not_blacklisted()
-    # async def server(self, context: Context) -> None:
-    #     """
-    #     Get the invite link of the discord server of the bot for some support.
-    #
-    #     :param context: The hybrid command context.
-    #     """
-    #     embed = discord.Embed(
-    #         description=f"Join the support server for the bot by clicking [here](https://discord.gg/mTBrXyWxAF).",
-    #         color=0xD75BF4
-    #     )
-    #     try:
-    #         await context.author.send(embed=embed)
-    #         await context.send("I sent you a private message!")
-    #     except discord.Forbidden:
-    #         await context.send(embed=embed)
 
 
 async def setup(bot):

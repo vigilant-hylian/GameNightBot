@@ -23,8 +23,6 @@ class Template(commands.Cog, name="template"):
         name="testcommand",
         description="This is a testing command that does nothing.",
     )
-    # This will only allow non-blacklisted members to execute the command
-    @checks.not_blacklisted()
     # This will only allow owners of the bot to execute the command -> config.json
     @checks.is_owner()
     async def testcommand(self, context: Context):
@@ -41,4 +39,5 @@ class Template(commands.Cog, name="template"):
 
 # And then we finally add the cog to the bot so that it can load, unload, reload and use it's content.
 async def setup(bot):
+    pass
     await bot.add_cog(Template(bot))
