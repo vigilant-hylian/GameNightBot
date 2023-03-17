@@ -83,5 +83,27 @@ class Schedule(commands.Cog, name="schedule"):
         await context.send(embed=embed)
 
 
+    @commands.hybrid_command(
+            name='remove_game',
+            description='Remove a new game from the schedule.'
+        )
+    async def remove_game(self, context: Context, entry_id: int):
+        success = await db_manager.remove_schedule(entry_id)
+        self.bot.logger.info(f'{success.rowcount}')
+        if success.rowcount == 1:
+            embed = discord.Embed(
+                title=f"Deleted",
+                description=f"Removed entry.",
+                color=0x299639
+            )
+        else:
+            embed = discord.Embed(
+                title=f"Invalid Entry",
+                description=f"Please check provided ID.",
+                color=0xff0000
+            )
+        await context.send(embed=embed)
+
+
 async def setup(bot):
     await bot.add_cog(Schedule(bot))

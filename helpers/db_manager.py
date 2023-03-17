@@ -29,7 +29,10 @@ async def add_schedule(name: str, timestamp: int, interval: int) -> True:
     """
     This function will add a user based on its ID in the blacklist.
 
-    :param user_id: The ID of the user that should be added into the blacklist.
+    :param name: The name of the new game to be run
+    :param timestamp: incoming UTC timestamp
+    :param interval: the number of days after which the game will be repeated
+    :return bool
     """
     async with aiosqlite.connect(DATABASE_PATH) as db:
         await db.execute("INSERT INTO games(game_name, start_timestamp, interval) VALUES (?, ?, ?)", (name, timestamp, interval))
@@ -37,35 +40,16 @@ async def add_schedule(name: str, timestamp: int, interval: int) -> True:
         return True
 
 
-
-
-
-# async def get_blacklisted_users() -> list:
-#     """
-#     This function will return the list of all blacklisted users.
-#
-#     :param user_id: The ID of the user that should be checked.
-#     :return: True if the user is blacklisted, False if not.
-#     """
-#     async with aiosqlite.connect(DATABASE_PATH) as db:
-#         async with db.execute("SELECT user_id, strftime('%s', created_at) FROM blacklist") as cursor:
-#             result = await cursor.fetchall()
-#             return result
-#
-#
-# async def is_blacklisted(user_id: int) -> bool:
-#     """
-#     This function will check if a user is blacklisted.
-#
-#     :param user_id: The ID of the user that should be checked.
-#     :return: True if the user is blacklisted, False if not.
-#     """
-#     async with aiosqlite.connect(DATABASE_PATH) as db:
-#         async with db.execute("SELECT * FROM blacklist WHERE user_id=?", (user_id,)) as cursor:
-#             result = await cursor.fetchone()
-#             return result is not None
-#
-#
+async def remove_schedule(entry_id: int) -> True:
+    """
+    This function will remove an entry from the database
+    :param entry_id: the PK of the entry to remove
+    :return bool
+    """
+    async with aiosqlite.connect(DATABASE_PATH) as db:
+        success = await db.execute("DELETE FROM games AS game WHERE game.id = ?", (entry_id,))
+        await db.commit()
+        return success
 
 #
 #
