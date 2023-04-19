@@ -33,19 +33,30 @@ class Schedule(commands.Cog, name="schedule"):
         :param context: The application command context.
         """
         games_list = await db_manager.get_schedules()
+        stored_list = []
         embed = discord.Embed(
             title=f"Currently Running Games",
             description="The following games have been scheduled to be played! The next session is below in your local timezome.",
             color=0x299639
         )
+        # Build a list of games, with correct timestamps
         for game in games_list:
             current_time = datetime.now()
             next_session = datetime.fromtimestamp(game[2])
             while time.mktime(next_session.timetuple()) < time.mktime(current_time.timetuple()):
                 next_session += timedelta(days=game[3])
-            embed.add_field(name=f"{game[1]}", value=f"Next Session: <t:{math.trunc(datetime.timestamp(next_session))}>\n"
-                f"Runs every: {game[3]} days\n"
-                f"ID: {game[0]}\n", inline=False)
+            stored_list.append({"name": game[1], "next_session": next_session, "days": game[3], "id": game[0]})
+
+        # Sort the games by next occurring time
+        def nextgametime(elem):
+            return elem['next_session']
+        stored_list.sort(key=nextgametime)
+
+        # Create a message for Discord
+        for game in stored_list:
+            embed.add_field(name=f"{game['name']}", value=f"Next Session: <t:{math.trunc(datetime.timestamp(game['next_session']))}>\n"
+                f"Runs every: {game['days']} days\n"
+                f"ID: {game['id']}\n", inline=False)
         await context.send(embed=embed)
 
     @commands.hybrid_command(
