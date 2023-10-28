@@ -43,8 +43,9 @@ class Schedule(commands.Cog, name="schedule"):
         for game in games_list:
             current_time = datetime.now()
             next_session = datetime.fromtimestamp(game[2])
-            while time.mktime(next_session.timetuple()) < time.mktime(current_time.timetuple()):
-                next_session += timedelta(days=game[3])
+            if game[3] > 0:
+                while time.mktime(next_session.timetuple()) < time.mktime(current_time.timetuple()):
+                    next_session += timedelta(days=game[3])
             stored_list.append({"name": game[1], "next_session": next_session, "days": game[3], "id": game[0]})
 
         # Sort the games by next occurring time
